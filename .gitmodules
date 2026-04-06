@@ -1,0 +1,6 @@
+[submodule "Engine/vendor/SDL"]
+	path = Engine/vendor/SDL
+	url = https://github.com/ThatTanishqTak/SDL.git
+[submodule "Engine/vendor/spdlog"]
+	path = Engine/vendor/spdlog
+	url = https://github.com/ThatTanishqTak/spdlog.git
