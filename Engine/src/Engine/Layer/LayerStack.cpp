@@ -6,11 +6,19 @@ namespace Engine
 {
 	LayerStack::~LayerStack()
 	{
+		Clear();
+	}
+
+	void LayerStack::Clear()
+	{
 		for (Layer* it_Layer : m_Layers)
 		{
 			it_Layer->OnDetach();
 			delete it_Layer;
 		}
+
+		m_Layers.clear();
+		m_LayerInsertIndex = 0;
 	}
 
 	void LayerStack::PushLayer(Layer* layer)

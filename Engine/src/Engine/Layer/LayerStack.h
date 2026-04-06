@@ -22,6 +22,7 @@ namespace Engine
 		void PushOverlay(Layer* overlay);
 		void PopLayer(Layer* layer);
 		void PopOverlay(Layer* overlay);
+		void Clear();
 
 		auto begin() { return m_Layers.begin(); }
 		auto end() { return m_Layers.end(); }

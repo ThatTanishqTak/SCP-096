@@ -1,8 +1,8 @@
 #include "Engine/Application/Application.h"
-#include "Engine/Window/Window.h"
+
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Utilities/Log.h"
-#include "Engine/Utilities/Time.h"
+#include "Engine/Window/Window.h"
 
 #include <SDL3/SDL.h>
 
@@ -49,6 +49,14 @@ namespace Engine
 
 	void Application::Shutdown()
 	{
+		if (!m_Running && !m_Renderer && !m_Window && !m_SDLInitialized)
+		{
+			return;
+		}
+
+
+		m_LayerStack.Clear();
+
 		if (m_Renderer)
 		{
 			m_Renderer->Shutdown();
@@ -72,14 +80,17 @@ namespace Engine
 
 	void Application::PollEvents()
 	{
-		SDL_Event l_Event;
-		while (SDL_PollEvent(&l_Event))
+		SDL_Event l_SDLEvent;
+		while (SDL_PollEvent(&l_SDLEvent))
 		{
-			switch (l_Event.type)
+			Event l_Event;
+			switch (l_SDLEvent.type)
 			{
 				case SDL_EVENT_QUIT:
 				{
-					m_Running = false;
+					l_Event.Type = EventType::Quit;
+					OnEvent(l_Event);
+
 					break;
 				}
 
@@ -89,5 +100,51 @@ namespace Engine
 				}
 			}
 		}
+	}
+
+	void Application::OnUpdate(float deltaTime)
+	{
+		for (Layer* it_Layer : m_LayerStack)
+		{
+			it_Layer->OnUpdate(deltaTime);
+		}
+	}
+
+	void Application::OnRender()
+	{
+		if (!m_Renderer)
+		{
+			return;
+		}
+
+		m_Renderer->BeginFrame();
+		for (Layer* it_Layer : m_LayerStack)
+		{
+			it_Layer->OnRender();
+		}
+		m_Renderer->EndFrame();
+	}
+
+	void Application::OnEvent(Event& event)
+	{
+		if (event.Type == EventType::Quit)
+		{
+			m_Running = false;
+		}
+
+		for (auto it_Layer = m_LayerStack.rbegin(); it_Layer != m_LayerStack.rend(); ++it_Layer)
+		{
+			(*it_Layer)->OnEvent(event);
+		}
+	}
+
+	void Application::PushLayer(Layer* layer)
+	{
+		m_LayerStack.PushLayer(layer);
+	}
+
+	void Application::PushOverlay(Layer* overlay)
+	{
+		m_LayerStack.PushOverlay(overlay);
 	}
 }
