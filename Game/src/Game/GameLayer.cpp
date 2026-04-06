@@ -2,12 +2,17 @@
 
 namespace Game
 {
-	void GameLayer::Update()
+	GameLayer::GameLayer() : Layer("GameLayer")
 	{
 
 	}
 
-	void GameLayer::Render()
+	void GameLayer::OnUpdate(float deltaTime)
+	{
+		static_cast<void>(deltaTime);
+	}
+
+	void GameLayer::OnRender()
 	{
 
 	}

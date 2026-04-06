@@ -1,7 +1,7 @@
 #include "Game/Game.h"
+#include "Game/GameLayer.h"
 
 #include "Engine/Application/Application.h"
-#include "Engine/Renderer/Renderer.h"
 #include "Engine/Utilities/Log.h"
 #include "Engine/Utilities/Time.h"
 
@@ -24,6 +24,11 @@ namespace Game
 			CLIENT_ERROR("Failed to initialize game application");
 			m_Application->Shutdown();
 		}
+		else
+		{
+			m_GameLayer = new GameLayer();
+			m_Application->PushLayer(m_GameLayer);
+		}
 
 		CLIENT_INFO("Game Initialized");
 	}
@@ -43,27 +48,9 @@ namespace Game
 			Engine::Utilities::Time::Update();
 
 			m_Application->PollEvents();
-
-			Update(Engine::Utilities::Time::GetDeltaTime());
-			Render();
+			m_Application->OnUpdate(Engine::Utilities::Time::GetDeltaTime());
+			m_Application->OnRender();
 		}
-	}
-
-	void Game::Update(float deltaTime)
-	{
-		//CLIENT_TRACE("{}", deltaTime);
-		(void)deltaTime;
-	}
-
-	void Game::Render()
-	{
-		if (!m_Application || !m_Application->GetRenderer())
-		{
-			return;
-		}
-
-		m_Application->GetRenderer()->BeginFrame();
-		m_Application->GetRenderer()->EndFrame();
 	}
 }
 

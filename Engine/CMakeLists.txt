@@ -1,4 +1,4 @@
-project(Engine LANGUAGES CXX)
+project(Engine LANGUAGES C CXX)
 
 set(SDL_SHARED ON CACHE BOOL "" FORCE)
 set(SDL_STATIC OFF CACHE BOOL "" FORCE)
@@ -36,16 +36,23 @@ add_subdirectory(vendor/spdlog)
 
 find_package(OpenGL REQUIRED)
 
+set(GLAD_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glad/include)
+set(GLAD_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glad/src/glad.c)
+
 file(GLOB_RECURSE ENGINE_SOURCE CONFIGURE_DEPENDS
     src/*.cpp
     src/*.h
 )
 
-add_library(Engine STATIC ${ENGINE_SOURCE})
+add_library(Engine STATIC
+    ${ENGINE_SOURCE}
+    ${GLAD_SOURCE}
+)
 add_library(Engine::Engine ALIAS Engine)
 
 target_include_directories(Engine PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${GLAD_INCLUDE_DIR}
 )
 
 target_link_libraries(Engine PUBLIC

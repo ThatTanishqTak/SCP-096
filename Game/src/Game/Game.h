@@ -9,6 +9,8 @@ namespace Engine
 
 namespace Game
 {
+	class GameLayer;
+
 	class Game
 	{
 	public:
@@ -18,10 +20,7 @@ namespace Game
 		void Run();
 
 	private:
-		void Update(float deltaTime);
-		void Render();
-
-	private:
 		std::unique_ptr<Engine::Application> m_Application;
+		GameLayer* m_GameLayer = nullptr;
 	};
 }

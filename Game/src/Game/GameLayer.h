@@ -5,10 +5,10 @@ namespace Game
 	class GameLayer : public Engine::Layer
 	{
 	public:
-		GameLayer() = default;
+		GameLayer();
 		~GameLayer() = default;
 
-		void Update() override;
-		void Render() override;
+		void OnUpdate(float deltaTime) override;
+		void OnRender() override;
 	};
 }
