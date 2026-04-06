@@ -1,7 +1,5 @@
 #pragma once
 
-struct SDL_Renderer;
-
 namespace Engine
 {
 	class Window;
@@ -18,9 +16,7 @@ namespace Engine
 		void BeginFrame();
 		void EndFrame();
 
-		SDL_Renderer* GetRenderer() const { return m_Renderer; }
-
 	private:
-		SDL_Renderer* m_Renderer = nullptr;
+		Window* m_Window = nullptr;
 	};
 }

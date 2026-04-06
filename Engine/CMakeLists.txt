@@ -34,6 +34,8 @@ set(SDL_RENDER_D3D12 OFF CACHE BOOL "" FORCE)
 add_subdirectory(vendor/SDL EXCLUDE_FROM_ALL)
 add_subdirectory(vendor/spdlog)
 
+find_package(OpenGL REQUIRED)
+
 file(GLOB_RECURSE ENGINE_SOURCE CONFIGURE_DEPENDS
     src/*.cpp
     src/*.h
@@ -49,6 +51,7 @@ target_include_directories(Engine PUBLIC
 target_link_libraries(Engine PUBLIC
     SDL3::SDL3
     spdlog::spdlog
+    OpenGL::GL
 )
 
 if(MSVC)

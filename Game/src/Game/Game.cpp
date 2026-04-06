@@ -22,7 +22,7 @@ namespace Game
 		if (!m_Application->Initialize("SCP-096", 1920, 1080))
 		{
 			CLIENT_ERROR("Failed to initialize game application");
-			m_IsRunning = false;
+			m_Application->Shutdown();
 		}
 
 		CLIENT_INFO("Game Initialized");
@@ -38,35 +38,14 @@ namespace Game
 
 	void Game::Run()
 	{
-		while (m_IsRunning)
+		while (m_Application->IsRunning())
 		{
 			Engine::Utilities::Time::Update();
 
-			PollEvents();
+			m_Application->PollEvents();
 
 			Update(Engine::Utilities::Time::GetDeltaTime());
 			Render();
-		}
-	}
-
-	void Game::PollEvents()
-	{
-		SDL_Event l_Event;
-		while (SDL_PollEvent(&l_Event))
-		{
-			switch (l_Event.type)
-			{
-				case SDL_EVENT_QUIT:
-				{
-					m_IsRunning = false;
-					break;
-				}
-
-				default:
-				{
-					break;
-				}
-			}
 		}
 	}
 

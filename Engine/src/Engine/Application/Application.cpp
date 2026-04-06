@@ -66,5 +66,28 @@ namespace Engine
 			SDL_Quit();
 			m_SDLInitialized = false;
 		}
+
+		m_Running = false;
+	}
+
+	void Application::PollEvents()
+	{
+		SDL_Event l_Event;
+		while (SDL_PollEvent(&l_Event))
+		{
+			switch (l_Event.type)
+			{
+				case SDL_EVENT_QUIT:
+				{
+					m_Running = false;
+					break;
+				}
+
+				default:
+				{
+					break;
+				}
+			}
+		}
 	}
 }

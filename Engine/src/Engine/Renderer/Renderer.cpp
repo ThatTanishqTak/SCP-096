@@ -3,6 +3,7 @@
 #include "Engine/Utilities/Log.h"
 
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_opengl.h>
 
 namespace Engine
 {
@@ -13,44 +14,70 @@ namespace Engine
 
 	bool Renderer::Initialize(Window* window)
 	{
-		if (!window || !window->GetWindow())
+		if (!window || !window->GetWindow() || !window->GetContext())
 		{
-			CORE_ERROR("Renderer initialization failed: invalid window");
+			CORE_ERROR("Renderer initialization failed: invalid window or OpenGL context");
 			return false;
 		}
 
-		m_Renderer = SDL_CreateRenderer(window->GetWindow(), nullptr);
+		m_Window = window;
 
-		if (!m_Renderer)
+		int l_Width = 0;
+		int l_Height = 0;
+		SDL_GetWindowSizeInPixels(m_Window->GetWindow(), &l_Width, &l_Height);
+		glViewport(0, 0, l_Width, l_Height);
+
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+
+		const GLubyte* l_Vendor = glGetString(GL_VENDOR);
+		const GLubyte* l_Renderer = glGetString(GL_RENDERER);
+		const GLubyte* l_Version = glGetString(GL_VERSION);
+
+		CORE_TRACE("Initialized OpenGL Renderer");
+
+		if (l_Vendor && l_Renderer && l_Version)
 		{
-			CORE_ERROR("Failed to create renderer: {}", SDL_GetError());
-			return false;
+			CORE_TRACE("OpenGL Vendor: {}", reinterpret_cast<const char*>(l_Vendor));
+			CORE_TRACE("OpenGL Renderer: {}", reinterpret_cast<const char*>(l_Renderer));
+			CORE_TRACE("OpenGL Version: {}", reinterpret_cast<const char*>(l_Version));
 		}
-
-		CORE_INFO("Initialized Renderer");
 
 		return true;
 	}
 
 	void Renderer::Shutdown()
 	{
-		if (m_Renderer)
+		if (m_Window)
 		{
-			SDL_DestroyRenderer(m_Renderer);
-			m_Renderer = nullptr;
-
+			m_Window = nullptr;
 			CORE_INFO("Renderer Shutdown Complete");
 		}
 	}
 
 	void Renderer::BeginFrame()
 	{
-		SDL_SetRenderDrawColorFloat(m_Renderer, 0.05f, 0.05f, 0.05f, 1.0f);
-		SDL_RenderClear(m_Renderer);
+		if (!m_Window || !m_Window->GetWindow())
+		{
+			return;
+		}
+
+		int l_Width = 0;
+		int l_Height = 0;
+		SDL_GetWindowSizeInPixels(m_Window->GetWindow(), &l_Width, &l_Height);
+		glViewport(0, 0, l_Width, l_Height);
+
+		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	void Renderer::EndFrame()
 	{
-		SDL_RenderPresent(m_Renderer);
+		if (!m_Window)
+		{
+			return;
+		}
+
+		m_Window->SwapBuffers();
 	}
 }
