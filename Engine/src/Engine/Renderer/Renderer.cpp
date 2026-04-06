@@ -3,7 +3,7 @@
 #include "Engine/Utilities/Log.h"
 
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_opengl.h>
+#include <glad/glad.h>
 
 namespace Engine
 {
@@ -21,6 +21,12 @@ namespace Engine
 		}
 
 		m_Window = window;
+
+		if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(SDL_GL_GetProcAddress)))
+		{
+			CORE_ERROR("Renderer initialization failed: failed to load GLAD");
+			return false;
+		}
 
 		int l_Width = 0;
 		int l_Height = 0;
