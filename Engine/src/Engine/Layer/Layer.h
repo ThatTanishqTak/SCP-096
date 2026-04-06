@@ -1,14 +1,48 @@
 #pragma once
 
+#include <string>
+
 namespace Engine
 {
+	struct Event;
+
 	class Layer
 	{
 	public:
-		Layer() = default;
-		~Layer() = default;
+		Layer(const std::string& layerName) : m_DebugName(layerName)
+		{
 
-		virtual void Render() = 0;
-		virtual void Update() = 0;
+		}
+		virtual ~Layer() = default;
+
+		virtual void OnAttach()
+		{
+
+		}
+
+		virtual void OnDetach()
+		{
+
+		}
+
+		virtual void OnUpdate(float deltaTime)
+		{
+			static_cast<void>(deltaTime);
+		}
+
+		virtual void OnRender()
+		{
+
+		}
+
+		virtual void OnEvent(Event& event)
+		{
+			static_cast<void>(event);
+		}
+
+		const std::string& GetDebugName() const { return m_DebugName; }
+
+	private:
+		std::string m_DebugName;
 	};
 }
